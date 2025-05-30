@@ -1,0 +1,35 @@
+services:
+  backend:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/backend
+    ports:
+      - 8000:8000
+    environment:
+      - DEBUG=true
+      - SITE_NAME=NextGen Bank
+      - SECRET_KEY=/run/secrets/secret_key
+      - ADMIN_URL=/run/secrets/admin_url
+      - EMAIL_PORT=1025
+      - EMAIL_HOST=mailpit
+      - DEFAULT_FROM_EMAIL=NextGen Bank <noreply@nextgenbank.com>
+      - DOMAIN=localhost:8080
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=banker
+      - POSTGRES_PASSWORD=/run/secrets/db_password
+      - BANK_NAME=NextGen Bank
+
+    secrets:
+      - secret_key
+      - admin_url
+      - db_password
+
+secrets:
+  secret_key:
+    file: ./secrets/secret_key.txt
+  admin_url:
+    file: ./secrets/admin_url.txt
+  db_password:
+    file: ./secrets/db_password.txt

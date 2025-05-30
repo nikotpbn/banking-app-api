@@ -18,11 +18,11 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "restframework",
+    "rest_framework",
     "django_countries",
     "phonenumber_field",
     "drf_spectacular",
-    "djose",
+    "djoser",
     "cloudinary",
     "django_filters",
     "djcelery_email",
@@ -119,7 +119,7 @@ SITE_ID = 1
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = str(BASE_DIR / "staticfiles   ")
+STATIC_ROOT = str(BASE_DIR / "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
