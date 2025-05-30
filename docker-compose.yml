@@ -18,6 +18,7 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_DB=banker
+      - POSTGRES_USER = "dbuser"
       - POSTGRES_PASSWORD=/run/secrets/db_password
       - BANK_NAME=NextGen Bank
 
