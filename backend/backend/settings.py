@@ -1,16 +1,25 @@
 from pathlib import Path
 from loguru import logger
-from os import getenv, path
+import os
+
 
 def get_secret(key, default):
-    value = getenv(key, default)
-    if path.isfile(value):
+    value = os.environ.get(key, default)
+    if os.path.isfile(value):
         with open(value) as f:
             return f.read()
     return value
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = get_secret("SECRET_KEY", "")
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get("DEBUG")
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
 APPS_DIR = BASE_DIR / "core_apps"
 
@@ -86,15 +95,14 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": getenv("POSTGRES_DB"),
-        "USER": getenv("POSTGRES_USER"),
-        "PASSWORD": get_secret("POSTGRES_PASSWORD", ""),
-        "HOST": getenv("POSTGRES_HOST"),
-        "PORT": getenv("POSTGRES_PORT")
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": get_secret("DB_PASS", ""),
     }
 }
 
@@ -180,3 +188,15 @@ LOGGING = {
     "handlers": {"loguru": {"class": "interceptor.InterceptHandler"}},
     "root": {"handlers": ["loguru"], "level": "DEBUG"},
 }
+
+SITE_NAME = os.environ.get("SITE_NAME")
+
+ADMIN_URL = get_secret("ADMIN_URL", "")
+
+EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+DOMAIN = os.environ.get("DOMAIN")
+
+MAX_UPLOAD_SIZE = 1 * 1024 * 1024

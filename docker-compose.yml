@@ -1,7 +1,9 @@
 services:
   backend:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/backend
     ports:
@@ -15,17 +17,52 @@ services:
       - EMAIL_HOST=mailpit
       - DEFAULT_FROM_EMAIL=NextGen Bank <noreply@nextgenbank.com>
       - DOMAIN=localhost:8080
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=banker
-      - POSTGRES_USER = "dbuser"
-      - POSTGRES_PASSWORD=/run/secrets/db_password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=banker
+      - DB_USER=dbuser
+      - DB_PASS=/run/secrets/db_password
       - BANK_NAME=NextGen Bank
-
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
     secrets:
       - secret_key
       - admin_url
       - db_password
+
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_USER=dbuser
+      - POSTGRES_DB=banker
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "dbuser", "-d", "banker"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    secrets:
+      - db_password
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    volumes:
+      - banker_mailpit_db:/data
+    environment:
+      - MP_MAX_MESSAGE=5000
+      - MP_DATA_FILE=/data/mailpit.db
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+
 
 secrets:
   secret_key:
@@ -34,3 +71,7 @@ secrets:
     file: ./secrets/admin_url.txt
   db_password:
     file: ./secrets/db_password.txt
+
+volumes:
+  postgres_data:
+  banker_mailpit_db:
