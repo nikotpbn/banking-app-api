@@ -1,5 +1,6 @@
 from pathlib import Path
 from loguru import logger
+from datetime import timedelta
 import os
 
 
@@ -200,3 +201,11 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 DOMAIN = os.environ.get("DOMAIN")
 
 MAX_UPLOAD_SIZE = 1 * 1024 * 1024
+
+CSRF_TRUSTED_ORIGINS = ["https://localhost:8080"]
+
+LOCKOUT_DURATION = timedelta(minutes=os.environ.get("LOCKOUT_DURATION"))
+
+LOGIN_ATTEMPTS = 3
+
+OTP_EXPIRATION = timedelta(minutes=os.environ.get("OTP_EXPIRATION"))

@@ -22,6 +22,8 @@ services:
       - DB_NAME=banker
       - DB_USER=dbuser
       - DB_PASS=/run/secrets/db_password
+      - LOCKOUT_DURATION=1
+      - OTP_EXPIRATION=1
       - BANK_NAME=NextGen Bank
     depends_on:
       db:
