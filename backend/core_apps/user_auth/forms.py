@@ -3,7 +3,9 @@ from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class UserCreationForm(DjangoUserCreationForm):
@@ -71,7 +73,6 @@ class UserChangeForm(DjangoUserChangeForm):
             "last_name",
             "security_question",
             "security_answer",
-            "is_active",
             "is_staff",
             "is_superuser",
         ]

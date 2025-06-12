@@ -1,7 +1,7 @@
 # NextGen Bank project from Udemy course
 
 Tech Stack:
-DjangoRestFramework, Celery, Redis, PostgreSQL
+DjangoRestFramework, Celery, Redis, PostgreSQL, NGINX
 
 Adaptations:
  - No settings granulation in order to not modify root project files.

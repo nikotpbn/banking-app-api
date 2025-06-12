@@ -54,7 +54,7 @@ LOCAL_APPS = [
     "core_apps.common",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
@@ -206,8 +206,23 @@ MAX_UPLOAD_SIZE = 1 * 1024 * 1024
 
 CSRF_TRUSTED_ORIGINS = ["https://localhost:8080"]
 
-LOCKOUT_DURATION = timedelta(minutes=os.environ.get("LOCKOUT_DURATION"))
+LOCKOUT_DURATION = timedelta(minutes=int(os.environ.get("LOCKOUT_DURATION")))
 
 LOGIN_ATTEMPTS = 3
 
-OTP_EXPIRATION = timedelta(minutes=os.environ.get("OTP_EXPIRATION"))
+OTP_EXPIRATION = timedelta(minutes=int(os.environ.get("OTP_EXPIRATION")))
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "NextGen Bank API",
+    "DESCRIPTION": "An API built for a banking system",
+    "VERSION": "1.0.0",
+    "SERVER_INCLUDE_SCHEMA": False,
+    "LICENSE": {
+        "name": "MIT License",
+        "url": "http://opensource.org/license/mit"
+    },
+}

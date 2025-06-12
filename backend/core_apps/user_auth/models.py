@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, AbstractUser
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -39,6 +39,16 @@ class User(AbstractBaseUser):
         BRANCH_MANAGER = "branch_manager", _("Branch Manager")
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    is_staff = models.BooleanField(
+        _("staff status"),
+        default=False,
+        help_text=_("Designates whether the user can log into this admin site."),
+    )
+    is_superuser = models.BooleanField(
+        _("superuser status"),
+        default=False,
+        help_text=_("Designates whether the user is a superuser."),
+    )
     username = models.CharField(_("Username"), max_length=12, unique=True)
     security_question = models.CharField(
         _("Security Question"), max_length=30, choices=SecurityQuestions.choices
@@ -49,7 +59,7 @@ class User(AbstractBaseUser):
     middle_name = models.CharField(
         _("Middle Name"), max_length=30, blank=True, null=True
     )
-    middle_name = models.CharField(_("Last Name"), max_length=30)
+    last_name = models.CharField(_("Last Name"), max_length=30)
     id_no = models.PositiveBigIntegerField(_("ID Number"), unique=True)
     account_status = models.CharField(
         _("Account Status"),
@@ -63,10 +73,11 @@ class User(AbstractBaseUser):
         choices=RoleChoices.choices,
         default=RoleChoices.CUSTOMER,
     )
-    failed_login_attemps = models.PositiveSmallIntegerField(deafult=0)
+    failed_login_attemps = models.PositiveSmallIntegerField(default=0)
     last_failed_login = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(_("OTP"), max_length=6, blank=True)
     otp_expiry_time = models.DateTimeField(_("OTP Expiry Time"), null=True, blank=True)
+    date_joined = models.DateField(auto_now_add=True)
 
     objects = UserManager()
     USERNAME_FIELD = "email"
