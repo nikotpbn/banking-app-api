@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -9,7 +9,12 @@ from .emails import send_account_locked_email
 from .managers import UserManager
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
+    class Meta:
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
+        ordering = ["-date_joined"]
+
     class SecurityQuestions(models.TextChoices):
         MAIDEN_NAME = (
             "maiden_name",
@@ -39,27 +44,24 @@ class User(AbstractBaseUser):
         BRANCH_MANAGER = "branch_manager", _("Branch Manager")
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
-    )
-    is_superuser = models.BooleanField(
-        _("superuser status"),
-        default=False,
-        help_text=_("Designates whether the user is a superuser."),
-    )
-    username = models.CharField(_("Username"), max_length=12, unique=True)
-    security_question = models.CharField(
-        _("Security Question"), max_length=30, choices=SecurityQuestions.choices
-    )
-    security_answer = models.CharField(_("Security Answer"), max_length=30)
     email = models.EmailField(_("Email"), unique=True, db_index=True)
+    username = models.CharField(_("Username"), max_length=12, unique=True)
     first_name = models.CharField(_("First Name"), max_length=30)
     middle_name = models.CharField(
         _("Middle Name"), max_length=30, blank=True, null=True
     )
     last_name = models.CharField(_("Last Name"), max_length=30)
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    security_question = models.CharField(
+        _("Security Question"), max_length=30, choices=SecurityQuestions.choices
+    )
+    security_answer = models.CharField(_("Security Answer"), max_length=30)
+
+
     id_no = models.PositiveBigIntegerField(_("ID Number"), unique=True)
     account_status = models.CharField(
         _("Account Status"),
@@ -77,7 +79,7 @@ class User(AbstractBaseUser):
     last_failed_login = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(_("OTP"), max_length=6, blank=True)
     otp_expiry_time = models.DateTimeField(_("OTP Expiry Time"), null=True, blank=True)
-    date_joined = models.DateField(auto_now_add=True)
+    date_joined = models.DateTimeField()
 
     objects = UserManager()
     USERNAME_FIELD = "email"
@@ -142,13 +144,18 @@ class User(AbstractBaseUser):
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}".title().strip()
 
-    class Meta:
-        verbose_name = _("User")
-        verbose_name_plural = _("Users")
-        ordering = ["-date_joined"]
-
-    def has_role(self, role_name:str) -> bool:
+    def has_role(self, role_name: str) -> bool:
         return hasattr(self, "role") and self.role == role_name
 
     def __str__(self):
         return f"{self.full_name} - {self.get_role_display()}"
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True

@@ -8,3 +8,6 @@ Adaptations:
  - Use of docker secrets instead of env files, wich adds an extra layer of security for credentials.
  - Use of alpine image instead of Debian's Bookworm, which implicates in a massive image size reduction.
  - Different setup for Dockerfiles
+
+Issues:
+- Custom user model was poorly built. Missing functions and fields.

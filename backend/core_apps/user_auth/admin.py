@@ -1,13 +1,14 @@
 from django.contrib import admin
+
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
 from .forms import UserChangeForm, UserCreationForm
 
-admin.site.register(User)
+from .models import User
 
 
+@admin.register(User)
 class CustomUserAdmin(UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
@@ -60,18 +61,13 @@ class CustomUserAdmin(UserAdmin):
                     "is_staff",
                     "is_superuser",
                     "groups",
-                    "user_permissions",
+                    "permissions",
                 )
             },
         ),
         (
             _("Important Dates"),
-            {
-                "fields": (
-                    "last_login",
-                    "date_joined",
-                )
-            },
+            {"fields": ("last_login",)},
         ),
     )
 
