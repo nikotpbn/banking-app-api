@@ -1,6 +1,9 @@
 services:
-  backend:
-    build: .
+  backend: &backend
+    build:
+      context: .
+      args:
+        - DEV=true
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
@@ -26,14 +29,29 @@ services:
       - LOCKOUT_DURATION=1
       - OTP_EXPIRATION=1
       - BANK_NAME=NextGen Bank
+      - CELERY_BROKER_URL=amqp://rabbitmq
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       db:
         condition: service_healthy
         restart: true
+      redis:
+        condition: service_healthy
+        restart: true
+
     secrets:
       - secret_key
       - admin_url
       - db_password
+
+  redis:
+    image: redis:8.0.2
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres
@@ -77,6 +95,59 @@ services:
     depends_on:
       - backend
 
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+
+  celeryworker:
+    <<: *backend
+    command: /celery_scripts/celeryworker.sh
+
+  flower:
+    <<: *backend
+    ports:
+      - "5555:5555"
+    volumes:
+      - flower_db:/backend/flower_db
+    environment:
+      - CELERY_FLOWER_USER=admin
+      - CELERY_FLOWER_PASSWORD=pass123word
+      - CELERY_BROKER_URL=amqp://rabbitmq
+      - LOCKOUT_DURATION=1
+      - OTP_EXPIRATION=1
+    command: /celery_scripts/flower.sh
+
+  celerybeat:
+    build:
+      context: .
+      args:
+        - DEV=true
+    environment:
+      - LOCKOUT_DURATION=1
+      - OTP_EXPIRATION=1
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=banker
+      - DB_USER=dbuser
+      - DB_PASS=/run/secrets/db_password
+    command: /celery_scripts/celerybeat.sh
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+      redis:
+        condition: service_healthy
+        restart: true
+    secrets:
+      - db_password
+
+
+
 
 secrets:
   secret_key:
@@ -90,3 +161,6 @@ volumes:
   postgres_data:
   banker_mailpit_db:
   logs-store:
+  rabbitmq_data:
+  rabbitmq_log:
+  flower_db:
