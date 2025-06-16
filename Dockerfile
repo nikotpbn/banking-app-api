@@ -3,6 +3,7 @@ FROM python:3.13.3-alpine3.21
 COPY ./requirements/requirements.txt /tmp/requirements.txt
 COPY ./requirements/requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./docker/local/django/celery_scripts /celery_scripts
+COPY ./docker/local/django/scripts /scripts
 COPY ./backend /backend
 
 WORKDIR /backend
@@ -26,8 +27,11 @@ RUN python -m venv /py && \
     mkdir -p /backend/logs && \
     chown -R django-user:django-user /backend/logs && \
     chmod -R 755 /backend/logs && \
-    chmod -R +x /celery_scripts
+    chmod -R +x /celery_scripts && \
+    chmod -R +x /scripts
 
-ENV PATH="/py/bin:$PATH"
+ENV PATH="/scripts:/py/bin:$PATH"
 
 USER django-user
+
+CMD ["start.sh"]
