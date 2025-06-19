@@ -1,6 +1,6 @@
 from pathlib import Path
 from loguru import logger
-from datetime import timedelta
+from datetime import timedelta, date
 import os
 import cloudinary
 
@@ -113,6 +113,12 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = "user_auth.User"
+DEAFULT_BIRTHDATE = date(1900, 1, 1)
+DEFAULT_DATE = date(2000, 1, 1)
+DEFAULT_EXPIRY_DATE = date(2024, 1, 1)
+DEFAULT_COUNTRY = "US"
+DEFAULT_PHONE_NUMBER = "+250784123456"
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -205,7 +211,7 @@ DOMAIN = os.environ.get("DOMAIN")
 
 MAX_UPLOAD_SIZE = 1 * 1024 * 1024
 
-CSRF_TRUSTED_ORIGINS = ["https://localhost:8080"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8080"]
 
 LOCKOUT_DURATION = timedelta(minutes=int(os.environ.get("LOCKOUT_DURATION")))
 
@@ -253,3 +259,4 @@ cloudinary.config(
     api_key=CLOUDINARY_API_KEY,
     api_secret=CLOUDINARY_API_SECRET
 )
+
