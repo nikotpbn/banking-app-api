@@ -59,7 +59,7 @@ class ProfileAdmin(admin.ModelAdmin):
                     "signature_photo",
                     "gender",
                     "date_of_birth",
-                    "matrial_status",
+                    "marital_status",
                 )
             },
         ),
@@ -71,7 +71,7 @@ class ProfileAdmin(admin.ModelAdmin):
             _("Identification"),
             {
                 "fields": (
-                    "means_of_identificaation",
+                    "identification_type",
                     "id_issue_date",
                     "id_expiry_date",
                     "passport_number",
@@ -83,7 +83,7 @@ class ProfileAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "employment_status",
-                    "emplayer_name",
+                    "employer_name",
                     "annual_income",
                     "date_of_employment",
                     "employer_address",
@@ -97,7 +97,7 @@ class ProfileAdmin(admin.ModelAdmin):
     inlines = [NextOfKinInline]
 
     def full_name(self, obj) -> str:
-        return obj.user.full_name()
+        return obj.user.full_name
 
     full_name.short_description = _("Full Name")
 

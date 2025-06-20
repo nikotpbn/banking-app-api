@@ -10,4 +10,4 @@ Adaptations:
  - Different setup for Dockerfiles
 
 Issues:
-- Custom user model was poorly built. Missing functions and fields.
+- Custom user model was poorly built. Missing functions and fields (e.g. date_joined).

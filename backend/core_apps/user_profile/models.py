@@ -202,7 +202,7 @@ class Profile(TimeStampedModel):
         blank=True,
         null=True,
     )
-    emplyer_city = models.CharField(
+    employer_city = models.CharField(
         _("Employer City"),
         max_length=50,
         blank=True,
