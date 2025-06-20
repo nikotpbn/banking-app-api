@@ -36,6 +36,7 @@ services:
       - CLOUDINARY_CLOUD_NAME=/run/secrets/cloudinary_cloud_name
       - CLOUDINARY_API_KEY=/run/secrets/cloudinary_api_key
       - CLOUDINARY_API_SECRET=/run/secrets/cloudinary_api_secret
+      - COOKIE_SECURE=False
     depends_on:
       db:
         condition: service_healthy

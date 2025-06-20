@@ -13,7 +13,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
-        ordering = ["-username"]
+        ordering = ["-date_joined"]
 
     class SecurityQuestions(models.TextChoices):
         MAIDEN_NAME = (
@@ -79,6 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_failed_login = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(_("OTP"), max_length=6, blank=True)
     otp_expiry_time = models.DateTimeField(_("OTP Expiry Time"), null=True, blank=True)
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
     objects = UserManager()
     USERNAME_FIELD = "email"

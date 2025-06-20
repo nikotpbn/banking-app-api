@@ -260,3 +260,9 @@ cloudinary.config(
     api_secret=CLOUDINARY_API_SECRET
 )
 
+
+COOKIE_NAME = "access"
+COOKIE_SAMESITE = "Lax"
+COOKIE_PATH = "/"
+COOKIE_HTTPONLY = True
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "True") == "True"
