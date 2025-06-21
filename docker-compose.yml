@@ -37,6 +37,7 @@ services:
       - CLOUDINARY_API_KEY=/run/secrets/cloudinary_api_key
       - CLOUDINARY_API_SECRET=/run/secrets/cloudinary_api_secret
       - COOKIE_SECURE=False
+      - SIGNING_KEY=/run/secrets/signing_key
     depends_on:
       db:
         condition: service_healthy
@@ -52,6 +53,7 @@ services:
       - cloudinary_api_key
       - cloudinary_api_secret
       - cloudinary_cloud_name
+      - signing_key
 
   redis:
     image: redis:8.0.2
@@ -129,7 +131,12 @@ services:
       - CELERY_BROKER_URL=amqp://rabbitmq
       - LOCKOUT_DURATION=1
       - OTP_EXPIRATION=1
+      - SECRET_KEY=/run/secrets/secret_key
+      - SIGNING_KEY=/run/secrets/signing_key
     command: /celery_scripts/flower.sh
+    secrets:
+      - signing_key
+      - secret_key
 
   celerybeat:
     build:
@@ -144,6 +151,8 @@ services:
       - DB_NAME=banker
       - DB_USER=dbuser
       - DB_PASS=/run/secrets/db_password
+      - SIGNING_KEY=/run/secrets/signing_key
+      - SECRET_KEY=/run/secrets/secret_key
     command: /celery_scripts/celerybeat.sh
     depends_on:
       db:
@@ -154,8 +163,8 @@ services:
         restart: true
     secrets:
       - db_password
-
-
+      - signing_key
+      - secret_key
 
 
 secrets:
@@ -171,6 +180,8 @@ secrets:
     file: ./secrets/cloudinary_api_secret.txt
   cloudinary_api_key:
     file: ./secrets/cloudinary_api_key.txt
+  signing_key:
+    file: ./secrets/signing_key.txt
 
 volumes:
   postgres_data:

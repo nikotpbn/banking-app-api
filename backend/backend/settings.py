@@ -4,6 +4,7 @@ from datetime import timedelta, date
 import os
 import cloudinary
 
+
 def get_secret(key, default):
     value = os.environ.get(key, default)
     if os.path.isfile(value):
@@ -221,6 +222,49 @@ OTP_EXPIRATION = timedelta(minutes=int(os.environ.get("OTP_EXPIRATION")))
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "core_apps.common.cookie_auth.CookieAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ],
+    "PAGE_SIZE": 10,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "50/day",
+        "user": "100/day",
+    },
+}
+
+SIMPLE_JWT = {
+    "SIGNING_KEY": get_secret("SIGNING_KEY", SECRET_KEY),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}
+
+DJOSER = {
+    "USER_ID_FIELD": "id",
+    "LOGIN_FIELD": "email",
+    "TOKEN_MODEL": None,
+    "USE_CREATE_PASSWORD_RETYPE": True,
+    "SEND_ACTIVATION_EMAIL": True,
+    "PASSWORD_CHANGED_CONFIRMATION_EMAIL": True,
+    "PASSWORD_RESET_CONFIRM_RETYPE": True,
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "PASSWORD_CONFIRM_URL": "password-reset/{uid}/{token}",
+    "SERIALIZERS": {
+        "user_create": "core_apps.user_auth.serializers.UserCreateSerializer",
+        }
 }
 
 SPECTACULAR_SETTINGS = {
@@ -228,10 +272,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "An API built for a banking system",
     "VERSION": "1.0.0",
     "SERVER_INCLUDE_SCHEMA": False,
-    "LICENSE": {
-        "name": "MIT License",
-        "url": "http://opensource.org/license/mit"
-    },
+    "LICENSE": {"name": "MIT License", "url": "http://opensource.org/license/mit"},
 }
 
 if USE_TZ:
@@ -257,7 +298,7 @@ CLOUDINARY_API_SECRET = get_secret("CLOUDINARY_API_SECRET", "")
 cloudinary.config(
     cloud_name=CLOUDINARY_CLOUD_NAME,
     api_key=CLOUDINARY_API_KEY,
-    api_secret=CLOUDINARY_API_SECRET
+    api_secret=CLOUDINARY_API_SECRET,
 )
 
 
