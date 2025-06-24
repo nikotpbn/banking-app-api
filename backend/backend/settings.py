@@ -47,6 +47,7 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "djcelery_email",
     "django_celery_beat",
+    "rest_framework_simplejwt.token_blacklist"
 ]
 
 LOCAL_APPS = [
@@ -81,7 +82,7 @@ ROOT_URLCONF = "backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [ '/backend/core_apps/templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -261,7 +262,8 @@ DJOSER = {
     "PASSWORD_CHANGED_CONFIRMATION_EMAIL": True,
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "ACTIVATION_URL": "activate/{uid}/{token}",
-    "PASSWORD_CONFIRM_URL": "password-reset/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
     "SERIALIZERS": {
         "user_create": "core_apps.user_auth.serializers.UserCreateSerializer",
         }

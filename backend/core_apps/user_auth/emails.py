@@ -11,7 +11,7 @@ def send_otp_email(email, otp):
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [email]
     context = {
-        "opt": otp,
+        "otp": otp,
         "expiry_time": settings.OTP_EXPIRATION,
         "site_name": settings.SITE_NAME,
     }

@@ -108,7 +108,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.failed_login_attemps += 1
         self.last_failed_login = timezone.now()
 
-        if self.last_failed_login >= settings.LOGIN_ATTEMPTS:
+        if self.failed_login_attemps >= settings.LOGIN_ATTEMPTS:
             self.account_status = self.AccountStatus.LOCKED
             self.save()
             send_account_locked_email(self)

@@ -74,6 +74,8 @@ services:
       - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
       - POSTGRES_USER=dbuser
       - POSTGRES_DB=banker
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "dbuser", "-d", "banker"]
       interval: 30s

@@ -1,4 +1,4 @@
-from django.contrub.auth import get_user_model
+from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer as DjoserUserCreateSerializer
 
 User = get_user_model()
@@ -9,11 +9,10 @@ class UserCreateSerializer(DjoserUserCreateSerializer):
         model = User
         fields = [
             "email",
-            "username",
             "password",
             "first_name",
             "last_name",
-            "id_number",
+            "id_no",
             "security_question",
             "security_answer",
         ]

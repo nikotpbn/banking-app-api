@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -29,6 +29,8 @@ drf_spectacular = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    path("api/v1/auth/", include("djoser.urls")),
+    path("api/v1/auth/", include("core_apps.user_auth.urls")),
 ]
 urlpatterns += drf_spectacular
 

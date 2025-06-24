@@ -23,7 +23,7 @@ class CookieAuthentication(JWTAuthentication):
 
         if raw_token is not None:
             try:
-                validated_token = self.get_validated_toke(raw_token)
+                validated_token = self.get_validated_token(raw_token)
                 return self.get_user(validated_token), validated_token
             except TokenError as e:
                 logger.error(f"Token validation error: {e}")
