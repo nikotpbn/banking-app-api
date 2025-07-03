@@ -31,7 +31,7 @@ class ContentViewAdmin(admin.ModelAdmin):
     ]
     fieldsets = (
         (None, {"fields": ("content_type", "object_id", "content_object")}),
-        (_("View Details"), {"fields": ("user", "viewer_id", "last_viewed")}),
+        (_("View Details"), {"fields": ("user", "viewer_ip", "last_viewed")}),
         (_("Timestamps"), {"fields": ("created_at", "updated_at"), "classes": ("collapse,")})
 
     )

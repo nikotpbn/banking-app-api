@@ -123,6 +123,6 @@ class ProfileAdmin(admin.ModelAdmin):
         search_fields = ["first_name", "last_name", "profile__user__email"]
 
         def full_name(self, obj) -> str:
-            return obj.user.full_name()
+            return f"{obj.first_name}  {obj.last_name}"
 
         full_name.short_description = _("Full Name")

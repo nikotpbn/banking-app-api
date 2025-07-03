@@ -75,7 +75,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=RoleChoices.choices,
         default=RoleChoices.CUSTOMER,
     )
-    failed_login_attemps = models.PositiveSmallIntegerField(default=0)
+    failed_login_attempts = models.PositiveSmallIntegerField(default=0)
     last_failed_login = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(_("OTP"), max_length=6, blank=True)
     otp_expiry_time = models.DateTimeField(_("OTP Expiry Time"), null=True, blank=True)
@@ -105,16 +105,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         return False
 
     def handle_failed_login_attempts(self) -> None:
-        self.failed_login_attemps += 1
+        self.failed_login_attempts += 1
         self.last_failed_login = timezone.now()
 
-        if self.failed_login_attemps >= settings.LOGIN_ATTEMPTS:
+        if self.failed_login_attempts >= settings.LOGIN_ATTEMPTS:
             self.account_status = self.AccountStatus.LOCKED
             self.save()
             send_account_locked_email(self)
         self.save()
 
-    def reset_failed_login_attemps(self) -> None:
+    def reset_failed_login_attempts(self) -> None:
         self.failed_login_attemps = 0
         self.last_failed_login = None
         self.account_status = self.AccountStatus.ACTIVE

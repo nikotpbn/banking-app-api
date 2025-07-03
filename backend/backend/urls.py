@@ -9,7 +9,6 @@ from drf_spectacular.views import (
 )
 
 
-
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 ]
@@ -31,6 +30,7 @@ drf_spectacular = [
     ),
     path("api/v1/auth/", include("djoser.urls")),
     path("api/v1/auth/", include("core_apps.user_auth.urls")),
+    path("api/v1/profiles/", include("core_apps.user_profile.urls")),
 ]
 urlpatterns += drf_spectacular
 

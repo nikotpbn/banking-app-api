@@ -1,11 +1,8 @@
 from django.contrib import admin
-
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
-
-from .forms import UserChangeForm, UserCreationForm
-
 from .models import User
+from .forms import UserChangeForm, UserCreationForm
 
 
 @admin.register(User)
@@ -22,16 +19,20 @@ class CustomUserAdmin(UserAdmin):
         "is_active",
         "role",
     ]
-
     list_filter = ["email", "is_staff", "is_active", "role"]
-
-    fildsets = (
+    fieldsets = (
         (
             _("Login Credentials"),
-            {"fields": ("username", "email", "password")},
+            {
+                "fields": (
+                    "username",
+                    "email",
+                    "password",
+                )
+            },
         ),
         (
-            _("Personal Info"),
+            _("Personal Information"),
             {"fields": ("first_name", "middle_name", "last_name", "id_no", "role")},
         ),
         (
@@ -46,12 +47,7 @@ class CustomUserAdmin(UserAdmin):
         ),
         (
             _("Security"),
-            {
-                "fields": (
-                    "security_question",
-                    "security_answer",
-                )
-            },
+            {"fields": ("security_question", "security_answer")},
         ),
         (
             _("Permissions and Groups"),
@@ -61,15 +57,19 @@ class CustomUserAdmin(UserAdmin):
                     "is_staff",
                     "is_superuser",
                     "groups",
-                    "permissions",
+                    "user_permissions",
                 )
             },
         ),
         (
-            _("Important Dates"),
-            {"fields": ("last_login",)},
+            _("Important dates"),
+            {
+                "fields": (
+                    "last_login",
+                    "date_joined",
+                )
+            },
         ),
     )
-
     search_fields = ["email", "username", "first_name", "last_name"]
     ordering = ["email"]

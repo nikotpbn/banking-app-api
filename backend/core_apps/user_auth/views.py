@@ -55,7 +55,7 @@ class CustomTokenCreateView(TokenCreateView):
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
-        user.reset_failed_login_attemps()
+        user.reset_failed_login_attempts()
 
         otp = generate_otp()
         user.set_otp(otp)
@@ -77,7 +77,7 @@ class CustomTokenCreateView(TokenCreateView):
             user = User.objects.filter(email=email).first()
             if user:
                 user.handle_failed_login_attempts()
-                failed_attempts = user.failed_login_attemps
+                failed_attempts = user.failed_login_attempts
                 logger.error(
                     f"Failed login attempts : {failed_attempts} for user { email}"
                 )

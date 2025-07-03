@@ -44,7 +44,7 @@ class ContentView(TimeStampedModel):
         unique_together = ["content_type", "object_id", "user", "viewer_ip"]
 
     def __str__(self):
-        return f"{self.content_type} viewed by {self.user.get_full_name if self.user else 'Anonymous'} from IP {self.viewer_ip}"
+        return f"{self.content_type} viewed by {self.user.full_name if self.user else 'Anonymous'} from IP {self.viewer_ip}"
 
     @classmethod
     def record_view(

@@ -22,15 +22,15 @@ class UserCreationForm(DjangoUserCreationForm):
         ]
 
     def clean_email(self):
-        email = self.cleaned_data["email"]
+        email = self.cleaned_data.get("email")
         if User.objects.filter(email=email).exists():
-            raise ValidationError(_("An User with this email already exists"))
+            raise ValidationError(_("A user with that email already exists."))
         return email
 
     def clean_id_no(self):
         id_no = self.cleaned_data.get("id_no")
         if User.objects.filter(id_no=id_no).exists():
-            raise ValidationError(_("An User with this ID number already exists"))
+            raise ValidationError(_("A user with that ID number already exists."))
         return id_no
 
     def clean(self):
@@ -50,7 +50,6 @@ class UserCreationForm(DjangoUserCreationForm):
                     "security_answer",
                     _("Security answer is required for regular users"),
                 )
-
         return cleaned_data
 
     def save(self, commit=True):
@@ -71,19 +70,22 @@ class UserChangeForm(DjangoUserChangeForm):
             "last_name",
             "security_question",
             "security_answer",
+            "is_active",
             "is_staff",
             "is_superuser",
         ]
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        if User.objects.exclude(pk=self.isntance.pk).filter(email=email).exists():
-            raise ValidationError(_("An User with this email already exists"))
+        if User.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
+            raise ValidationError(_("A user with that email already exists."))
+        return email
 
     def clean_id_no(self):
         id_no = self.cleaned_data.get("id_no")
-        if User.objects.exclude(pk=self.isntance.pk).filter(id_no=id_no).exists():
-            raise ValidationError(_("An User with this ID number already exists"))
+        if User.objects.exclude(pk=self.instance.pk).filter(id_no=id_no).exists():
+            raise ValidationError(_("A user with that ID number already exists."))
+        return id_no
 
     def clean(self):
         cleaned_data = super().clean()
@@ -102,5 +104,4 @@ class UserChangeForm(DjangoUserChangeForm):
                     "security_answer",
                     _("Security answer is required for regular users"),
                 )
-
         return cleaned_data
