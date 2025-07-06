@@ -38,6 +38,11 @@ services:
       - CLOUDINARY_API_SECRET=/run/secrets/cloudinary_api_secret
       - COOKIE_SECURE=False
       - SIGNING_KEY=/run/secrets/signing_key
+      - BANK_CODE=211
+      - BANK_BRANCH_CODE=700
+      - CURRENCY_CODE_USD=01
+      - CURRENCY_CODE_EUR=02
+      - CURRENCY_CODE_GBP=03
     depends_on:
       db:
         condition: service_healthy

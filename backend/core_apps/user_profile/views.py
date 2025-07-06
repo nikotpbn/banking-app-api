@@ -1,3 +1,4 @@
+from django.db import transaction
 from typing import Any, List
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
@@ -10,8 +11,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.request import Request
+
 from core_apps.common.models import ContentView
 from core_apps.common.permissions import IsBranchManager
+from core_apps.accounts.utils import create_bank_account
+from core_apps.accounts.models import BankAccount
 from core_apps.common.renderers import GenericJsonRenderer
 from .models import Profile, NextOfKin
 from .serializers import NextOfKinSerializer, ProfileListSerializzer, ProfileSerializer
@@ -52,6 +56,52 @@ class ProfileDetailAPIView(generics.RetrieveUpdateAPIView):
 
         except:
             raise Http404("Profile not found")
+
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            updated_instance = serializer.save()
+            if updated_instance.is_complete_with_next_of_kin():
+                existing_account = BankAccount.objects.filter(
+                    user=request.user,
+                    currency=updated_instance.account_currency,
+                    account_type=updated_instance.account_type,
+                ).first()
+
+                if not existing_account:
+                    bank_account = create_bank_account(
+                        user=request.user,
+                        currency=updated_instance.account_currency,
+                        account_type=updated_instance.account_type,
+                    )
+
+                    message = (
+                        "Profile update and bank account created successfully."
+                        " An email has been sent to you with further instructions"
+                    )
+                else:
+                    message = "Profile updated successfully."
+
+                return Response(
+                    {"message": message, "data": serializer.data},
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                return Response(
+                    {
+                        "message": "Profile updated successfully. Please complete all required "
+                        "fields and at least one next of kin to create a bank account",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+
+        return Response(serializer.data)
 
     def record_profile_view(self, profile: Profile) -> None:
         content_type = ContentType.objects.get_for_model(profile)

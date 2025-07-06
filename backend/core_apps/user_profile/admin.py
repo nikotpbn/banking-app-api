@@ -39,6 +39,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "phone_number",
         "email",
         "employment_status",
+        "photo_preview",
     ]
     list_display_links = ["user"]
     list_filter = ["gender", "marital_status", "employment_status", "country"]
