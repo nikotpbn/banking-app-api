@@ -31,7 +31,7 @@
       <li>Even though its a mock this project has a serious database design problems where there is no normalization.</li>
       <li>Tutor seems to have not much experience with DRF framework (nor with database design)</li>
       <li>Bad currency setup - As a intermediate to advanced course there are some lessons with unecessary examples.</li>
-      <li>Several lessons can be skipped completely as code is available in GitHub (also, as mentioned above)</li>
+      <li>Several lessons can be skipped completely as code is available in GitHub (e.g. writing template emails)</li>
     </ul>
 
 <h3>Adaptations:</h3>
