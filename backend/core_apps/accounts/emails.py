@@ -7,6 +7,7 @@ from loguru import logger
 
 from core_apps.accounts.models import BankAccount
 
+
 def send_account_creation_email(user, bank_account):
     subject = _("Your New Bank Account has been created.")
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -22,6 +23,7 @@ def send_account_creation_email(user, bank_account):
     except Exception as e:
         logger.error(f"Failed to send account created email to: {email}: {str(e)}")
 
+
 def send_full_activation_email(account):
     subject = _("Your Bank Account is now fully activated")
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -35,4 +37,31 @@ def send_full_activation_email(account):
         email.send()
         logger.info(f"Account fully activated email sent to: {account.user.email}")
     except Exception as e:
-        logger.error(f"Failed to send fully activated  email to: {account.user.email}: {str(e)}")
+        logger.error(
+            f"Failed to send fully activated email to: {account.user.email}: {str(e)}"
+        )
+
+
+def send_deposit_email(user, user_email, amount, currency, new_balance, account_number):
+    subject = _("Deposit Confirmation")
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [user.email]
+    context = {
+        "user": user,
+        "amount": amount,
+        "currency": currency,
+        "new_balance": new_balance,
+        "account_number": account_number,
+        "site_name": settings.SITE_NAME,
+    }
+    html_email = render_to_string("emails/deposit_confimation.html", context)
+    plain_email = strip_tags(html_email)
+    email = EmailMultiAlternatives(subject, plain_email, from_email, recipient_list)
+    email.attach_alternative(html_email, "text/html")
+    try:
+        email.send()
+        logger.info(f"Deposit confimation email sent to: {user_email}")
+    except Exception as e:
+        logger.error(
+            f"Failed to send deposit confimation email to: {user_email}: {str(e)}"
+        )

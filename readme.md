@@ -23,6 +23,7 @@
       <li>Use of Database Indexes</li>
       <li>Application knowledge such as the Luhn algorithm</li>
       <li>Admin site customization</li>
+      <li>Use of logs</li>
     </ul>
 
   <h3>Cons:</h3>
@@ -30,8 +31,8 @@
       <li>A TDD approach would have been better. Only testing endpoints with postman is not enough.</li>
       <li>Even though its a mock this project has a serious database design problems where there is no normalization.</li>
       <li>Tutor seems to have not much experience with DRF framework (nor with database design)</li>
-      <li>Bad currency setup - As a intermediate to advanced course there are some lessons with unecessary examples.</li>
-      <li>Several lessons can be skipped completely as code is available in GitHub (e.g. writing template emails)</li>
+      <li>Bad currency setup</li>
+      <li>As a intermediate to advanced course there are several lessons with unecessary examples.</li>
     </ul>
 
 <h3>Adaptations:</h3>
@@ -41,23 +42,18 @@
       <li>Use of alpine image instead of Debian's Bookworm, which implicates in a massive image size reduction.</li>
       <li>Different setup for Dockerfiles</li>
       <li>No GenericJsonRenderer</li>
+      <li>Use of ModelSerializer where applicable and no overriiding of its methods</li>
+      <li>Use of routers</li>
+      <li>Removed redundant methods, functions and overrides</li>
     </ul>
 
 <h3>Issues:</h3>
   <ul>
+    <li>Validator do not let balance be negative (which is possible and would mean debit) </li>
     <li>CharField are limited to max_length 255</li>
-    <li>Unecessary scripts and functions that could be handled by the framework itself such as the
-  GenericJSONRenderer (Section 10 - 54) and overriding UUIDField serializer to return a string
-  which serializers.UUIDField already does.</li>
-    <li>Wrong use of ModelSerializer by overriding fields to the exactly the function as
-  the class, while field settings can be set with extra_kwargs Meta class field. Specially
-  by not using <strong>exclude</strong> fieldset.</li>
-    <li>Unecessary overriding of view functions fo perform the same process written in the mixin
-  (e.g. retrieve, update, partial_update and perform_update) and since its key raise_exception=True
-  perform the validation with a try:except block the extra wrapping is useless.
-  Thus, overall making most part of the code unproductive.</li>
-  <li>Creating a custom renderer to add the status_code field to the Response seems rather redundant
-  since response objects already contain an attribute for that purpose.</li>
+    <li>Unecessary scripts and functions that could be handled by the framework itself</li>
+    <li>Superfulous overriding of serializers and view methods</li>
+    <li>Redundant try:catch wrapping on serializer.is_valid while using raise_exception key</li>
   </ul>
 
   <h2>Links</h2>
