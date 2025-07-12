@@ -11,7 +11,7 @@
     <li>NGINX</li>
   </ul>
 
-<h2>Sidenotes:</h2>
+<h2>Course Sidenotes:</h2>
 
 
   <h3>Pros:</h3>
@@ -24,6 +24,7 @@
       <li>Application knowledge such as the Luhn algorithm</li>
       <li>Admin site customization</li>
       <li>Use of logs</li>
+      <li>Transactions</li>
     </ul>
 
   <h3>Cons:</h3>
@@ -34,6 +35,8 @@
       <li>Bad currency setup</li>
       <li>As a intermediate to advanced course there are several lessons with unecessary examples.</li>
     </ul>
+
+<h2>Project Sidenotes:</h2>
 
 <h3>Adaptations:</h3>
     <ul>
@@ -49,11 +52,13 @@
 
 <h3>Issues:</h3>
   <ul>
+    <li><strong><span style="color:red">For almost every banking action there is an email sent which in a real scenario is unpractical</strong></span></li>
     <li>Validator do not let balance be negative (which is possible and would mean debit) </li>
     <li>CharField are limited to max_length 255</li>
     <li>Unecessary scripts and functions that could be handled by the framework itself</li>
     <li>Superfulous overriding of serializers and view methods</li>
     <li>Redundant try:catch wrapping on serializer.is_valid while using raise_exception key</li>
+    <li>No use of cached sessions for better performance (used for steps in withdrawal)</l1>
   </ul>
 
   <h2>Links</h2>

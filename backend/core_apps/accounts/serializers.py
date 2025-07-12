@@ -49,6 +49,8 @@ class AccountVerificationSerializer(serializers.ModelSerializer):
 """
 Why a model serializer is used here???
 """
+
+
 class DepositSerializer(serializers.ModelSerializer):
     account_number = serializers.CharField(max_length=20)
     amount = serializers.DecimalField(
@@ -89,3 +91,117 @@ class CustomerInfoSerializer(serializers.ModelSerializer):
         if hasattr(obj.user, "profile") and obj.user.profile.photo_url:
             return obj.user.profile.photo_url
         return None
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    sender_account = serializers.CharField(max_length=20, required=False)
+    receiver_account = serializers.CharField(max_length=20, required=False)
+    amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2, min_value=Decimal("0.1")
+    )
+
+    class Meta:
+        model = Transaction
+        fields = "__all__"
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "status": {"read_only": True},
+            "crated_at": {"read_only": True},
+            "sender_account": {"required": False},
+            "receiver_account": {"required": False},
+            "amount": {"min_value": Decimal("0.1")},
+        }
+
+    def to_representation(self, instance: Transaction) -> str:
+        representation = super().to_representation(instance)
+
+        representation["sender"] = (
+            instance.sender.full_name if instance.sender else None
+        )
+        representation["receiver"] = (
+            instance.receiver.full_name if instance.receiver else None
+        )
+        representation["sender_account"] = (
+            instance.sender_account.account_number if instance.sender_account else None
+        )
+        representation["receiver_account"] = (
+            instance.receiver_account.account_number
+            if instance.receiver_account
+            else None
+        )
+        return representation
+
+    def validate(self, data):
+        transaction_type = data.get("transaction_type")
+        sender_account_number = data.get("sender_account")
+        receiver_account_number = data.get("receiver_account")
+        amount = data.get("amount")
+
+        try:
+            if transaction_type == Transaction.TransactionType.WITHDRAWAL:
+                account = BankAccount.objects.get(account_number=sender_account_number)
+                data["sender_account"] = account
+                data["receiver_account"] = None
+                if account.account_balance < amount:
+                    raise serializers.ValidationError(
+                        "Insufficient funds for withdrawal"
+                    )
+            elif transaction_type == Transaction.TransactionType.DEPOSIT:
+                account = BankAccount.objects.get(
+                    account_number=receiver_account_number
+                )
+                data["sender_account"] = None
+                data["receiver_account"] = account
+            else:
+                sender_account = BankAccount.objects.get(
+                    account_number=sender_account_number
+                )
+                receiver_account = BankAccount.objects.get(
+                    account_number=receiver_account_number
+                )
+                data["sender_account"] = sender_account
+                data["receiver_account"] = receiver_account
+
+                if sender_account == receiver_account:
+                    raise serializers.ValidationError(
+                        "Sender and receiver accounts must be different"
+                    )
+                if sender_account.currency != receiver_account.currency:
+                    raise serializers.ValidationError(
+                        "Transfers are only allowed between accounts with the same currency"
+                    )
+                if sender_account.account_balance < amount:
+                    raise serializers.ValidationError("Insufficient funds for transfer")
+        except BankAccount.DoesNotExist:
+            raise serializers.ValidationError("One or both accounts not found")
+        return data
+
+
+class SecurityQuestionSerializer(serializers.Serializer):
+    security_answer = serializers.CharField(max_length=30)
+
+    def validate(self, data: dict) -> dict:
+        user = self.context["request"].user
+        if data["security_answer"] != user.security_answer:
+            raise serializers.ValidationError("Incorrect security answer.")
+        return data
+
+
+class OTPVerificationSerializer(serializers.Serializer):
+    otp = serializers.CharField(max_length=6)
+
+    def validate(self, data: dict) -> dict:
+        user = self.context["request"].user
+        if not user.verify_otp(data["otp"]):
+            raise serializers.ValidationError("Invalid or expired OTP.")
+        return data
+
+
+class UsernameVerificationSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=12)
+
+    def validate_username(self, value: dict) -> dict:
+        user = self.context["request"].user
+        if user.username != value:
+            raise serializers.ValidationError("Invalid username.")
+        return value
