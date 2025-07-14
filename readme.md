@@ -31,7 +31,7 @@
     <ul>
       <li>A TDD approach would have been better. Only testing endpoints with postman is not enough.</li>
       <li>Even though its a mock this project has a serious database design problems where there is no normalization.</li>
-      <li>Tutor seems to have not much experience with DRF framework (nor with database design)</li>
+      <li>Lots of unecessary coding</li>
       <li>Bad currency setup</li>
       <li>As a intermediate to advanced course there are several lessons with unecessary examples.</li>
     </ul>
