@@ -35,6 +35,7 @@
       <li>Lots of unecessary coding</li>
       <li>Bad currency setup</li>
       <li>As a intermediate to advanced course there are several lessons with unecessary examples.</li>
+      <li>Cookie based authentication does not fit SPA and mobile</li>
     </ul>
 
 <h2>Project Sidenotes:</h2>

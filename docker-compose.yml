@@ -43,6 +43,9 @@ services:
       - CURRENCY_CODE_USD=01
       - CURRENCY_CODE_EUR=02
       - CURRENCY_CODE_GBP=03
+      - CARD_BANK_PREFIX=4132
+      - BANK_CARD_CODE=1300
+      - CVV_SECRET_KEY=/run/secrets/cvv_secret_key
     depends_on:
       db:
         condition: service_healthy
@@ -59,6 +62,7 @@ services:
       - cloudinary_api_secret
       - cloudinary_cloud_name
       - signing_key
+      - cvv_secret_key
 
   redis:
     image: redis:8.0.2
@@ -189,6 +193,8 @@ secrets:
     file: ./secrets/cloudinary_api_key.txt
   signing_key:
     file: ./secrets/signing_key.txt
+  cvv_secret_key:
+    file: ./secrets/cvv_secret_key.txt
 
 volumes:
   postgres_data:
