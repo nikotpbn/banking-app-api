@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.db.models import Q
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from loguru import logger
 
@@ -17,6 +18,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from .models import BankAccount, Transaction
+
 
 User = get_user_model()
 
@@ -142,3 +144,19 @@ def generate_transaction_pdf(user_id, start_date, end_date, account_number=None)
     except Exception as e:
         logger.error(f"Error generating transaction PDF for user {user_id}:{str(e)}")
         return f"Error generating PDF: {str(e)}"
+
+
+@shared_task
+def apply_daily_interest():
+    savings_account = BankAccount.objects.filter(
+        aaccount_type=BankAccount.AccountType.SAVINGS
+    )
+
+    for account in savings_account:
+        with transaction.atomic():
+            account.apply_daily_interest
+    logger.info(
+        f"Applied daily interest to {savings_account.count()} savings accounts."
+    )
+
+    return f"Applied daily interest to {savings_account.count()} savings accounts."
