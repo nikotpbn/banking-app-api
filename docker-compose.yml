@@ -164,6 +164,8 @@ services:
       - DB_PASS=/run/secrets/db_password
       - SIGNING_KEY=/run/secrets/signing_key
       - SECRET_KEY=/run/secrets/secret_key
+      - CELERY_BROKER_URL=amqp://rabbitmq
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     command: /celery_scripts/celerybeat.sh
     depends_on:
       db:

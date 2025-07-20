@@ -149,12 +149,12 @@ def generate_transaction_pdf(user_id, start_date, end_date, account_number=None)
 @shared_task
 def apply_daily_interest():
     savings_account = BankAccount.objects.filter(
-        aaccount_type=BankAccount.AccountType.SAVINGS
+        account_type=BankAccount.AccountType.SAVINGS
     )
 
     for account in savings_account:
         with transaction.atomic():
-            account.apply_daily_interest
+            account.apply_daily_interest()
     logger.info(
         f"Applied daily interest to {savings_account.count()} savings accounts."
     )
