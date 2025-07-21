@@ -46,6 +46,10 @@ services:
       - CARD_BANK_PREFIX=4132
       - BANK_CARD_CODE=1300
       - CVV_SECRET_KEY=/run/secrets/cvv_secret_key
+      - ADMIN_EMAIL=admin@nextgenbank.com
+      - LARGE_TRANSACTION_THRESHOLD=1000000.00
+      - FREQUENT_TRANSACTION_THRESHOLD=10
+      - TIME_WINDOW_HOURS=24
     depends_on:
       db:
         condition: service_healthy
@@ -166,6 +170,9 @@ services:
       - SECRET_KEY=/run/secrets/secret_key
       - CELERY_BROKER_URL=amqp://rabbitmq
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LARGE_TRANSACTION_THRESHOLD=1000000.00
+      - FREQUENT_TRANSACTION_THRESHOLD=10
+      - TIME_WINDOW_HOURS=24
     command: /celery_scripts/celerybeat.sh
     depends_on:
       db:

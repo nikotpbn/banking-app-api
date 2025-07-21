@@ -212,6 +212,7 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 DOMAIN = os.environ.get("DOMAIN")
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
 
 MAX_UPLOAD_SIZE = 1 * 1024 * 1024
 
@@ -299,6 +300,9 @@ CELERY_WORKER_SEND_TASK_EVENTS = True
 CELERY_BEAT_SCHEDULE = {
     "apply-daily-interest": {
         "task": "apply_daily_interest",
+    },
+    "detect-suspicious-activities": {
+        "task": "detect_suspicious_activities   ",
     },
 }
 
